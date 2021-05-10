@@ -5,7 +5,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
-    main: ["./assets/scripts/main.js", "./assets/styles/main.scss"],
+    main: ["./src/assets/scripts/main.js", "./src/assets/styles/main.scss"],
   },
   module: {
     rules: [
