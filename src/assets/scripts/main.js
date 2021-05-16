@@ -31,41 +31,48 @@ async function getMovies() {
 // asynchrounously render cards containing data of movies by search filter
 async function renderMoviesCard() {
   let movies = await getMovies();
+  let listElement = document.querySelector('.list-movies');
   let html = "";
 
-  movies.Search.forEach((movie) => {
-    let hmtlSegment = (movie.Poster != 'N/A') ?
-      `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
-        <div class="card movie-card" style="width: 18rem;">
-          <img src="${movie.Poster}" class="card-img-top" height="300px">
-            <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
-            <p class="card-text">Year : ${movie.Year}</p>
-            <div class="d-flex align-items-center justify-content-center">
-              <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+  if (movies.Response === "True") {
+    listElement.classList.add('row')
+    movies.Search.forEach((movie) => {
+      let hmtlSegment = (movie.Poster != 'N/A') ?
+        `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+          <div class="card movie-card" style="width: 18rem;">
+            <img src="${movie.Poster}" class="card-img-top" height="300px">
+              <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
+              <p class="card-text">Year : ${movie.Year}</p>
+              <div class="d-flex align-items-center justify-content-center">
+                <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+              </div>
             </div>
           </div>
-        </div>
-      </div>` :
-      `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
-        <div class="card movie-card" style="width: 18rem;">
-          <img src="uploads/no-image.png" class="card-img-top" height="300px">
-            <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
-            <p class="card-text">Year : ${movie.Year}</p>
-            <div class="d-flex align-items-center justify-content-center">
-              <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+        </div>` :
+        `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+          <div class="card movie-card" style="width: 18rem;">
+            <img src="uploads/no-image.png" class="card-img-top" height="300px">
+              <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
+              <p class="card-text">Year : ${movie.Year}</p>
+              <div class="d-flex align-items-center justify-content-center">
+                <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+              </div>
             </div>
           </div>
-        </div>
-      </div>`
-      ;
+        </div>`
+        ;
 
+      html += hmtlSegment;
+    });
+
+  } else {
+    listElement.classList.remove('row')
+    let hmtlSegment = `<div class="no-movie d-flex justify-content-center align-items-center text-secondary">${movies.Error}</div>`
     html += hmtlSegment;
-  });
-
+  }
   let moviesWrapper = document.querySelector(".list-movies");
   moviesWrapper.innerHTML = html;
 }
-
 
 // callback executed when card was found
 // get all the buttons and store them in array
@@ -166,3 +173,4 @@ async function getDetails(movieId) {
     console.log(error);
   }
 }
+
