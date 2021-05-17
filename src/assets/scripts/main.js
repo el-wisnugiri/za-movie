@@ -3,6 +3,7 @@ let searchBar = document.querySelector(".search-bar");
 let searchBtn = document.querySelector(".search-button");
 if (searchBtn) {
   searchBtn.addEventListener("click", function () {
+    baseGlobalVars();
     renderMoviesCard();
     renderPagination();
   });
@@ -15,6 +16,7 @@ if (searchBar) {
     var keyCode = e.code || e.key;
     if (keyCode == "Enter") {
       // Enter pressed
+      baseGlobalVars();
       renderMoviesCard();
       renderPagination();
     }
@@ -180,6 +182,12 @@ async function getDetails(movieId) {
   }
 }
 
+// change global var to default
+function baseGlobalVars() {
+  paginationBtn = [];
+  defaultPage = 1;
+  prevClicked = 0;
+}
 // global variable for pagination button
 let paginationBtn = [];
 let defaultPage = 1;
@@ -191,7 +199,6 @@ async function renderPagination() {
   let totalResults = movies.totalResults;
   let pages = totalResults / 10;
   let totalPages = pages.toFixed(0) >= 15 ? 15 : pages.toFixed(0);
-  // let paginationBtn = [];
 
   try {
     if (totalPages != null) {
