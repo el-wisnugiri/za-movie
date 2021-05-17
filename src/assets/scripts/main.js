@@ -201,14 +201,15 @@ async function renderPagination() {
   let totalPages = pages.toFixed(0) >= 15 ? 15 : pages.toFixed(0);
 
   try {
-    if (totalPages != null) {
+    console.log(movies.Response);
+    if (movies.Response === "True") {
       for (let i = 1; i <= totalPages; i++) {
         paginationBtn.push(
           `<li class="page-item"><a class="page-link" href="#" id="${i}">${i}</a></li>`
         );
       }
+      paginationBtn[0] = `<li class="page-item active"><a class="page-link" href="#" id="${defaultPage}">${defaultPage}</a></li>`;
     }
-    paginationBtn[0] = `<li class="page-item active"><a class="page-link" href="#" id="${defaultPage}">${defaultPage}</a></li>`;
     let modalWrapper = document.querySelector(".pagination");
     modalWrapper.innerHTML = paginationBtn.join("");
   } catch (error) {
@@ -323,3 +324,8 @@ async function getPaginationMovies(pageId) {
     console.log(error);
   }
 }
+
+// TODO: get started with favorites page, things to consider:
+// a json file called favorites to store favorites movies as an object
+// might need to create a class? not really, display favorites in different style.
+// consider to have an option to remove from favoritess
