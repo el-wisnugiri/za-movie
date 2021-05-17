@@ -180,22 +180,30 @@ async function getDetails(movieId) {
   }
 }
 
+// global variable for pagination button
+let paginationBtn = [];
+let defaultPage = 1;
+let prevClicked = 0;
+
 // display pagination
 async function renderPagination() {
   let movies = await getMovies();
   let totalResults = movies.totalResults;
   let pages = totalResults / 10;
   let totalPages = pages.toFixed(0) >= 15 ? 15 : pages.toFixed(0);
-  let paginationBtn = [];
+  // let paginationBtn = [];
 
   try {
     if (totalPages != null) {
       for (let i = 1; i <= totalPages; i++) {
-        paginationBtn += `<li class="page-item"><a class="page-link" href="#" id="${i}">${i}</a></li>`;
+        paginationBtn.push(
+          `<li class="page-item"><a class="page-link" href="#" id="${i}">${i}</a></li>`
+        );
       }
     }
+    paginationBtn[0] = `<li class="page-item active"><a class="page-link" href="#" id="${defaultPage}">${defaultPage}</a></li>`;
     let modalWrapper = document.querySelector(".pagination");
-    modalWrapper.innerHTML = paginationBtn;
+    modalWrapper.innerHTML = paginationBtn.join("");
   } catch (error) {
     console.log(error);
   }
@@ -234,9 +242,23 @@ paginationObserver.observe(document, {
 
 // pass the id of pagination button
 async function buttonFunction(e) {
-  // log the id of each button
-  // console.log(e.target.id);
-  getPaginationMovies(e.target.id);
+  // store id to pageNumber variable
+  let pageNumber = e.target.id;
+  let pageIndex = pageNumber - 1;
+  let prevPage = prevClicked + 1;
+  // these handle active class of the pagination button
+  paginationBtn[
+    prevClicked
+  ] = `<li class="page-item"><a class="page-link" href="#" id="${prevPage}">${prevPage}</a></li>`;
+  paginationBtn[
+    pageIndex
+  ] = `<li class="page-item active"><a class="page-link" href="#" id="${pageNumber}">${pageNumber}</a></li>`;
+  // update global array of pagination
+  let modalWrapper = document.querySelector(".pagination");
+  modalWrapper.innerHTML = paginationBtn.join("");
+  // render cards according to the page number
+  prevClicked = pageIndex;
+  getPaginationMovies([pageNumber]);
 }
 
 // api url will be let paginationResult = await fetch(`${url}?apikey=${apiKey}&s=${inputValue}&page={pageNumber}`);
