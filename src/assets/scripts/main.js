@@ -137,6 +137,8 @@ async function getDetails(movieId) {
         }))
         .then((res) => {
           // console.log(res.status, res.movieDetails)
+          favorites = res.movieDetails;
+          console.log(favorites);
           let hmtlSegment =
             res.movieDetails.Poster != "N/A"
               ? `<div class="details-image col-12 mb-md-5 d-flex justify-content-center">
@@ -201,7 +203,6 @@ async function renderPagination() {
   let totalPages = pages.toFixed(0) >= 15 ? 15 : pages.toFixed(0);
 
   try {
-    console.log(movies.Response);
     if (movies.Response === "True") {
       for (let i = 1; i <= totalPages; i++) {
         paginationBtn.push(
@@ -329,3 +330,27 @@ async function getPaginationMovies(pageId) {
 // a json file called favorites to store favorites movies as an object
 // might need to create a class? not really, display favorites in different style.
 // consider to have an option to remove from favoritess
+const fs = require("fs");
+
+// create favorites movie object
+let favorites = {};
+
+let favBtn = document.querySelector(".favorites-btn");
+if (favBtn) {
+  favBtn.addEventListener("click", function () {
+    // write JSON string to a file
+    addFavorites();
+  });
+}
+// convert JSON object to string
+const data = JSON.stringify(favorites);
+
+function addFavorites() {
+  fs.writeFile("favorites.json", data, (err) => {
+    if (err) {
+      throw err;
+    }
+    console.log("JSON data is saved.");
+  });
+}
+// TODO: FIX FS.WRITEFILE IS NOT A FUNCTION

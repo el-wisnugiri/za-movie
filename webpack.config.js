@@ -37,6 +37,11 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    fallback: {
+      fs: false,
+    },
+  },
   plugins: [new CleanWebpackPlugin()],
   output: {
     filename: "[name].bundle.js",
