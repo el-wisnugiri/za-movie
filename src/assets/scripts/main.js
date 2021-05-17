@@ -1,6 +1,6 @@
 // click event for search button
-let searchBar = document.querySelector('.search-bar');
-let searchBtn = document.querySelector('.search-button');
+let searchBar = document.querySelector(".search-bar");
+let searchBtn = document.querySelector(".search-button");
 if (searchBtn) {
   searchBtn.addEventListener("click", function () {
     renderMoviesCard();
@@ -16,6 +16,7 @@ if (searchBar) {
     if (keyCode == "Enter") {
       // Enter pressed
       renderMoviesCard();
+      renderPagination();
     }
   };
 }
@@ -38,15 +39,15 @@ async function getMovies() {
 // asynchrounously render cards containing data of movies by search filter
 async function renderMoviesCard() {
   let movies = await getMovies();
-  console.log(movies);
-  let listElement = document.querySelector('.list-movies');
+  let listElement = document.querySelector(".list-movies");
   let html = "";
 
   if (movies.Response === "True") {
-    listElement.classList.add('row')
+    listElement.classList.add("row");
     movies.Search.forEach((movie) => {
-      let hmtlSegment = (movie.Poster != 'N/A') ?
-        `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+      let hmtlSegment =
+        movie.Poster != "N/A"
+          ? `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
           <div class="card movie-card" style="width: 18rem;">
             <img src="${movie.Poster}" class="card-img-top" height="300px">
               <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
@@ -56,8 +57,8 @@ async function renderMoviesCard() {
               </div>
             </div>
           </div>
-        </div>` :
-        `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+        </div>`
+          : `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
           <div class="card movie-card" style="width: 18rem;">
             <img src="uploads/no-image.png" class="card-img-top" height="300px">
               <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
@@ -67,15 +68,12 @@ async function renderMoviesCard() {
               </div>
             </div>
           </div>
-        </div>`
-        ;
-
+        </div>`;
       html += hmtlSegment;
     });
-
   } else {
-    listElement.classList.remove('row')
-    let hmtlSegment = `<div class="no-movie d-flex justify-content-center align-items-center text-secondary">${movies.Error}</div>`
+    listElement.classList.remove("row");
+    let hmtlSegment = `<div class="no-movie d-flex justify-content-center align-items-center text-secondary">${movies.Error}</div>`;
     html += hmtlSegment;
   }
   let moviesWrapper = document.querySelector(".list-movies");
@@ -85,14 +83,13 @@ async function renderMoviesCard() {
 // callback executed when card was found
 // get all the buttons and store them in array
 function handleCards(card) {
-  var buttonArray = document.getElementsByClassName('movie-card');
+  var buttonArray = document.getElementsByClassName("movie-card");
   for (i = 0; i < buttonArray.length; i++) {
     if (document.addEventListener) {
-      buttonArray[i].addEventListener("click", myFunction);
-    }
-    else {
+      buttonArray[i].addEventListener("click", cardFunction);
+    } else {
       if (document.attachEvent) {
-        buttonArray[i].attachEvent("onclick", myFunction);
+        buttonArray[i].attachEvent("onclick", cardFunction);
       }
     }
   }
@@ -101,7 +98,7 @@ function handleCards(card) {
 // set up the mutation observer and keep observing cards result
 var observer = new MutationObserver(function (mutations, me) {
   // `mutations` is an array of mutations that occurred
-  var card = document.querySelector('.movie-card');
+  var card = document.querySelector(".movie-card");
   if (card) {
     handleCards(card);
     //me.disconnect(); // stop observing
@@ -112,11 +109,11 @@ var observer = new MutationObserver(function (mutations, me) {
 // start observing
 observer.observe(document, {
   childList: true,
-  subtree: true
-})
+  subtree: true,
+});
 
-// pass  the id
-async function myFunction(e) {
+// pass the id of card's button
+async function cardFunction(e) {
   // get pop-up details when card button is clicked
   getDetails(e.target.id);
 }
@@ -129,15 +126,18 @@ async function getDetails(movieId) {
   let html = "";
 
   try {
-    fetch(`${url}?apikey=${apiKey}&i=${id}`).then(response =>
-      response.json().then(data => ({
-        movieDetails: data,
-        status: response.status
-      })
-      ).then(res => {
-        // console.log(res.status, res.movieDetails)
-        let hmtlSegment = (res.movieDetails.Poster != 'N/A') ?
-          `<div class="details-image col-12 mb-md-5 d-flex justify-content-center">
+    fetch(`${url}?apikey=${apiKey}&i=${id}`).then((response) =>
+      response
+        .json()
+        .then((data) => ({
+          movieDetails: data,
+          status: response.status,
+        }))
+        .then((res) => {
+          // console.log(res.status, res.movieDetails)
+          let hmtlSegment =
+            res.movieDetails.Poster != "N/A"
+              ? `<div class="details-image col-12 mb-md-5 d-flex justify-content-center">
             <img src="${res.movieDetails.Poster}" alt="details - image" />
             </div >
             <div class="movie-details col-12">
@@ -152,8 +152,8 @@ async function getDetails(movieId) {
                 <li class="list-group-item"><b>Rated:</b> ${res.movieDetails.Rated}</li>
                 <li class="list-group-item"><b>Plot:</b> ${res.movieDetails.Plot}</li>
               </ul>
-            </div>` :
-          `<div class="details-image col-12 mb-md-5 d-flex justify-content-center">
+            </div>`
+              : `<div class="details-image col-12 mb-md-5 d-flex justify-content-center">
             <img src="uploads/no-image.png" alt="details - image" />
             </div >
             <div class="movie-details col-12">
@@ -168,37 +168,129 @@ async function getDetails(movieId) {
                 <li class="list-group-item"><b>Rated:</b> ${res.movieDetails.Rated}</li>
                 <li class="list-group-item"><b>Plot:</b> ${res.movieDetails.Plot}</li>
               </ul>
-            </div>`
-          ;
+            </div>`;
+          html += hmtlSegment;
 
-        html += hmtlSegment;
-
-        let modalWrapper = document.querySelector(".modal-body");
-        modalWrapper.innerHTML = html;
-      }));
+          let modalWrapper = document.querySelector(".modal-body");
+          modalWrapper.innerHTML = html;
+        })
+    );
   } catch (error) {
     console.log(error);
   }
 }
 
-// TODO: ADD PAGINATION TO SEARCH RESULT
-// logic = total pages =  total result / 10, if it decimal rounds the result
-// api url will be let paginationResult = await fetch(`${url}?apikey=${apiKey}&s=${inputValue}&page={pageNumber}`);
-// use boostrap pagination
+// display pagination
 async function renderPagination() {
-  let movies = await getMovies()
+  let movies = await getMovies();
   let totalResults = movies.totalResults;
   let pages = totalResults / 10;
-  let totalPages = pages.toFixed(0);
-  let html = ''
+  let totalPages = pages.toFixed(0) >= 15 ? 15 : pages.toFixed(0);
+  let paginationBtn = [];
 
   try {
     if (totalPages != null) {
-      for (let totalPages = 1; totalPages < array.length; totalPages++) {
-        let hmtlSegment = + `<li class="page-item"><a class="page-link" href="#" id="${totalPages}">${totalPages}</a></li>`
+      for (let i = 1; i <= totalPages; i++) {
+        paginationBtn += `<li class="page-item"><a class="page-link" href="#" id="${i}">${i}</a></li>`;
       }
     }
+    let modalWrapper = document.querySelector(".pagination");
+    modalWrapper.innerHTML = paginationBtn;
   } catch (error) {
-    console.log(error)
+    console.log(error);
+  }
+}
+
+// detect which button is being clicked
+function handlePagination(paginationBtn) {
+  var buttonArray = document.getElementsByClassName("page-item");
+  for (i = 0; i < buttonArray.length; i++) {
+    if (document.addEventListener) {
+      buttonArray[i].addEventListener("click", buttonFunction);
+    } else {
+      if (document.attachEvent) {
+        buttonArray[i].attachEvent("onclick", buttonFunction);
+      }
+    }
+  }
+}
+
+// set up the mutation observer and keep observing button array for pagination
+var paginationObserver = new MutationObserver(function (mutations, me) {
+  // `mutations` is an array of mutations that occurred
+  var button = document.querySelector(".page-item");
+  if (button) {
+    handlePagination(button);
+    //me.disconnect(); // stop observing
+    return;
+  }
+});
+
+// start observing
+paginationObserver.observe(document, {
+  childList: true,
+  subtree: true,
+});
+
+// pass the id of pagination button
+async function buttonFunction(e) {
+  // log the id of each button
+  // console.log(e.target.id);
+  getPaginationMovies(e.target.id);
+}
+
+// api url will be let paginationResult = await fetch(`${url}?apikey=${apiKey}&s=${inputValue}&page={pageNumber}`);
+// get movies by passing page number id
+async function getPaginationMovies(pageId) {
+  let url = "http://www.omdbapi.com/";
+  const apiKey = "867a6158";
+  // get the value of input field which has search-input class
+  let inputValue = document.querySelector(".search-input").value;
+  let pageNumber = pageId;
+  let html = "";
+
+  try {
+    fetch(`${url}?apikey=${apiKey}&s=${inputValue}&page=${pageNumber}`).then(
+      (response) =>
+        response
+          .json()
+          .then((data) => ({
+            movies: data,
+            status: response.status,
+          }))
+          .then((res) => {
+            res.movies.Search.forEach((movie) => {
+              let hmtlSegment =
+                movie.Poster != "N/A"
+                  ? `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+                      <div class="card movie-card" style="width: 18rem;">
+                        <img src="${movie.Poster}" class="card-img-top" height="300px">
+                          <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
+                          <p class="card-text">Year : ${movie.Year}</p>
+                          <div class="d-flex align-items-center justify-content-center">
+                            <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>`
+                  : `<div class="col-md-4 mb-3 mt-3 d-flex justify-content-center">
+                      <div class="card movie-card" style="width: 18rem;">
+                        <img src="uploads/no-image.png" class="card-img-top" height="300px">
+                          <div class="card-body"><h5 class="card-title">${movie.Title}</h5>
+                          <p class="card-text">Year : ${movie.Year}</p>
+                          <div class="d-flex align-items-center justify-content-center">
+                            <a href="#" class="btn btn-secondary button-details" id="${movie.imdbID}" data-id="${movie.imdbID}" data-toggle="modal" data-target="#exampleModal">Show Details</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+              html += hmtlSegment;
+              let moviesWrapper = document.querySelector(".list-movies");
+              moviesWrapper.innerHTML = html;
+            });
+          })
+    );
+  } catch (error) {
+    console.log(error);
   }
 }
