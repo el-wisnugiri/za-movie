@@ -1,17 +1,24 @@
 // click event for search button
-document.querySelector(".search-button").addEventListener("click", function () {
-  renderMoviesCard();
-});
+let searchBar = document.querySelector('.search-bar');
+let searchBtn = document.querySelector('.search-button');
+if (searchBtn) {
+  searchBtn.addEventListener("click", function () {
+    renderMoviesCard();
+    renderPagination();
+  });
+}
 
 // search when the user click enter on input field
-document.querySelector(".search-bar").onkeypress = function (e) {
-  if (!e) e = window.event;
-  var keyCode = e.code || e.key;
-  if (keyCode == "Enter") {
-    // Enter pressed
-    renderMoviesCard();
-  }
-};
+if (searchBar) {
+  searchBar.onkeypress = function (e) {
+    if (!e) e = window.event;
+    var keyCode = e.code || e.key;
+    if (keyCode == "Enter") {
+      // Enter pressed
+      renderMoviesCard();
+    }
+  };
+}
 
 // asynchronously fetch the data everytime the user click on search
 async function getMovies() {
@@ -31,6 +38,7 @@ async function getMovies() {
 // asynchrounously render cards containing data of movies by search filter
 async function renderMoviesCard() {
   let movies = await getMovies();
+  console.log(movies);
   let listElement = document.querySelector('.list-movies');
   let html = "";
 
@@ -120,7 +128,6 @@ async function getDetails(movieId) {
   let id = movieId;
   let html = "";
 
-
   try {
     fetch(`${url}?apikey=${apiKey}&i=${id}`).then(response =>
       response.json().then(data => ({
@@ -174,3 +181,24 @@ async function getDetails(movieId) {
   }
 }
 
+// TODO: ADD PAGINATION TO SEARCH RESULT
+// logic = total pages =  total result / 10, if it decimal rounds the result
+// api url will be let paginationResult = await fetch(`${url}?apikey=${apiKey}&s=${inputValue}&page={pageNumber}`);
+// use boostrap pagination
+async function renderPagination() {
+  let movies = await getMovies()
+  let totalResults = movies.totalResults;
+  let pages = totalResults / 10;
+  let totalPages = pages.toFixed(0);
+  let html = ''
+
+  try {
+    if (totalPages != null) {
+      for (let totalPages = 1; totalPages < array.length; totalPages++) {
+        let hmtlSegment = + `<li class="page-item"><a class="page-link" href="#" id="${totalPages}">${totalPages}</a></li>`
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
